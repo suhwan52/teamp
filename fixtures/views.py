@@ -8,7 +8,7 @@ from .serializers import FixtureSerializer
 from django.http import Http404
 
 class FixtureCreateView(APIView):
-    # permission_classes = [permissions.IsAuthenticated]  #인증
+    # permission_classes = [permissions.IsAuthenticated]  #Authentication required
 
     def post(self, request):
         serializer = FixtureSerializer(data=request.data)
@@ -51,19 +51,19 @@ class FixtureDeleteView(APIView):
     
 class FixtureListView(APIView):
     def get(self, request):
-        page = int(request.GET.get('page',1))   #쿼리 파라미터 받기
+        page = int(request.GET.get('page',1))   #Retrieve query parameters(page, size)
         size = int(request.GET.get('size',10))
-        #전체 데이터 쿼리셋
+        #Get all data quryset
         queryset = Fixture.objects.all().order_by('id')
         total_count = queryset.count()
         total_page = (total_count + size - 1) // size
 
-        #페이징 적용
+        #Apply pagination
         start = (page - 1) * size
         end = start + size
         fixtures = queryset[start:end]
 
-        #데이터 직렬화, itemId로 변환
+        #Serialize data and convert id to itemId
         data = [
             {
                 "itemId":obj.id,
